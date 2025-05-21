@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker Pro</title>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="expense.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Navbar -->
+    <div id="navbar" class="navbar" style="display:none;">
+      <span class="brand">Expense Tracker Pro</span>
+      <nav>
+        <a href="#" onclick="showPage('homePage')">Home</a>
+        <a href="#" onclick="showPage('dashboardPage')">Dashboard</a>
+        <a href="#" onclick="showPage('historyPage')">Account History</a>
+        <a href="#" onclick="showPage('profilePage')">Profile</a>
+        <span class="user" id="navbarUsername"></span>
+      </nav>
+    </div>
+    <!-- Home Page -->
+    <div id="homePage" style="display:none;">
+      <h1>Welcome to Expense Tracker Pro</h1>
+      <p>Track your income and expenses, visualize your spending, and stay in control of your finances!</p>
+      <div id="homeQuickStats"></div>
+      <div class="cta">
+        <button onclick="showPage('dashboardPage')">Go to Dashboard</button>
+      </div>
+    </div>
+    <!-- Login Page -->
+    <div id="loginPage" style="display:none;">
+      <h2>Login</h2>
+      <form class="auth-form" id="loginForm" autocomplete="off">
+        <div id="loginError" class="error"></div>
+        <input type="text" id="loginUsername" placeholder="Username" required maxlength="24"/>
+        <input type="password" id="loginPassword" placeholder="Password" required maxlength="32"/>
+        <button type="submit">Login</button>
+        <span class="switch-link" onclick="showPage('registerPage')">Don't have an account? Register</span>
+      </form>
+    </div>
+    <!-- Register Page -->
+    <div id="registerPage" style="display:none;">
+      <h2>Register</h2>
+      <form class="auth-form" id="registerForm" autocomplete="off">
+        <div id="registerError" class="error"></div>
+        <input type="text" id="registerUsername" placeholder="Username" required maxlength="24"/>
+        <input type="password" id="registerPassword" placeholder="Password" required maxlength="32"/>
+        <button type="submit">Register</button>
+        <span class="switch-link" onclick="showPage('loginPage')">Already have an account? Login</span>
+      </form>
+    </div>
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" style="display:none;">
+      <div class="balance-section">
+        <div>
+          <div style="font-size:1.1rem;opacity:.8;">Current Balance</div>
+          <div class="balance" id="balance">₹0.00</div>
+        </div>
+        <div>
+          <div style="font-size:1.1rem;opacity:.8;">This Month</div>
+          <div class="balance" id="monthBalance">₹0.00</div>
+        </div>
+      </div>
+      <div class="summary-cards">
+        <div class="summary-card income">
+          <h3>Total Income</h3>
+          <div class="amount" id="incomeTotal">₹0.00</div>
+        </div>
+        <div class="summary-card expense">
+          <h3>Total Expense</h3>
+          <div class="amount" id="expenseTotal">₹0.00</div>
+        </div>
+        <div class="summary-card transactions">
+          <h3>Transactions</h3>
+          <div class="amount" id="transactionCount">0</div>
+        </div>
+      </div>
+      <div class="form-section">
+        <form id="transactionForm" autocomplete="off">
+          <div class="form-row">
+            <input type="text" id="description" placeholder="Description" required maxlength="32"/>
+            <input type="number" id="amount" placeholder="Amount" min="0.01" step="0.01" required/>
+            <select id="type">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+            <select id="category">
+              <option value="">Category</option>
+              <option value="Salary">Salary</option>
+              <option value="Business">Business</option>
+              <option value="Food">Food</option>
+              <option value="Travel">Travel</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Health">Health</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="date" id="date" required/>
+            <button type="submit">Add</button>
+          </div>
+        </form>
+      </div>
+      <div class="filter-section">
+        <select id="filterType">
+          <option value="">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="filterCategory">
+          <option value="">All Categories</option>
+          <option value="Salary">Salary</option>
+          <option value="Business">Business</option>
+          <option value="Food">Food</option>
+          <option value="Travel">Travel</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Bills">Bills</option>
+          <option value="Health">Health</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="month" id="filterMonth"/>
+        <button type="button" onclick="clearFilters()" style="margin-left:12px;padding:6px 16px;border-radius:7px;border:none;background:var(--gray);color:#fff;cursor:pointer;">Clear Filters</button>
+      </div>
+      <div class="transactions-section">
+        <h3 style="margin:0 0 12px 0;">Transaction History</h3>
+        <div class="transactions-list" id="transactions"></div>
+      </div>
+      <div class="chart-section">
+        <h3 style="margin:0 0 18px 0;">Expense Breakdown</h3>
+        <canvas id="expenseChart" height="110"></canvas>
+      </div>
+    </div>
+    <!-- Account History Page -->
+    <div id="historyPage" style="display:none;">
+      <h2 style="color:var(--primary);text-align:center;margin-bottom:24px;">Account History</h2>
+      <div class="filter-section">
+        <select id="historyFilterType">
+          <option value="">All Types</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="historyFilterCategory">
+          <option value="">All Categories</option>
+          <option value="Salary">Salary</option>
+          <option value="Business">Business</option>
+          <option value="Food">Food</option>
+          <option value="Travel">Travel</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Bills">Bills</option>
+          <option value="Health">Health</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="month" id="historyFilterMonth"/>
+        <button type="button" onclick="clearHistoryFilters()" style="margin-left:12px;padding:6px 16px;border-radius:7px;border:none;background:var(--gray);color:#fff;cursor:pointer;">Clear Filters</button>
+      </div>
+      <div class="transactions-section">
+        <h3 style="margin:0 0 12px 0;">All Transactions</h3>
+        <div class="transactions-list" id="historyTransactions"></div>
+      </div>
+    </div>
+    <!-- Profile Page -->
+    <div id="profilePage" style="display:none;">
+      <h2>Profile</h2>
+      <form id="profileForm" autocomplete="off">
+        <div id="profileMsg"></div>
+        <label for="profileUsername">Username</label>
+        <input type="text" id="profileUsername" required maxlength="24"/>
+        <button type="submit">Update Username</button>
+      </form>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <script>
+    // --- Auth Model ---
+    // User object: {username, password}
+    const USERS_KEY = 'expense-tracker-users';
+    const SESSION_KEY = 'expense-tracker-session';
+    // Transaction storage is per user!
+    function getUserStorageKey(username) {
+      return 'expense-tracker-pro-v1-' + username;
+    }
+    // --- Auth Helpers ---
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+    }
+    function saveUsers(users) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+    function setSession(username) {
+      localStorage.setItem(SESSION_KEY, username);
+    }
+    function getSession() {
+      return localStorage.getItem(SESSION_KEY);
+    }
+    function clearSession() {
+      localStorage.removeItem(SESSION_KEY);
+    }
+    function getCurrentUser() {
+      let username = getSession();
+      if (!username) return null;
+      let users = getUsers();
+      return users.find(u => u.username === username) || null;
+    }
+    // --- Page Routing ---
+    const PAGES = ['homePage','loginPage','registerPage','dashboardPage','historyPage','profilePage'];
+    function showPage(page) {
+      PAGES.forEach(id => document.getElementById(id).style.display = 'none');
+      if (page === 'dashboardPage' || page === 'homePage' || page === 'historyPage' || page === 'profilePage') {
+        document.getElementById('navbar').style.display = '';
+        let user = getCurrentUser();
+        document.getElementById('navbarUsername').textContent = user ? user.username : '';
+      } else {
+        document.getElementById('navbar').style.display = 'none';
+      }
+      document.getElementById(page).style.display = '';
+      // Page-specific init
+      if (page === 'dashboardPage') {
+        renderDashboard();
+      } else if (page === 'homePage') {
+        renderHomeQuickStats();
+      } else if (page === 'historyPage') {
+        renderHistory();
+      } else if (page === 'profilePage') {
+        renderProfile();
+      }
+      // Clear errors
+      if (page === 'loginPage') document.getElementById('loginError').textContent = '';
+      if (page === 'registerPage') document.getElementById('registerError').textContent = '';
+      if (page === 'profilePage') document.getElementById('profileMsg').textContent = '';
+    }
+    // --- Transaction Model ---
+    let transactions = [];
+    function loadTransactions() {
+      let user = getCurrentUser();
+      if (!user) return [];
+      let key = getUserStorageKey(user.username);
+      transactions = JSON.parse(localStorage.getItem(key)) || [];
+      return transactions;
+    }
+    function saveTransactions() {
+      let user = getCurrentUser();
+      if (!user) return;
+      let key = getUserStorageKey(user.username);
+      localStorage.setItem(key, JSON.stringify(transactions));
+    }
+    // --- Utilities ---
+    function formatAmount(amount) {
+      return '₹' + amount.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+    function todayDate() {
+      return new Date().toISOString().slice(0,10);
+    }
+    // --- Dashboard Functions ---
+    function renderDashboard() {
+      loadTransactions();
+      updateSummary();
+      renderTransactions();
+      renderChart();
+      document.getElementById('date').value = todayDate();
+    }
+    function updateSummary() {
+      let income = 0, expense = 0;
+      transactions.forEach(t => {
+        if (t.type === 'income') income += t.amount;
+        else expense += t.amount;
+      });
+      document.getElementById('incomeTotal').textContent = formatAmount(income);
+      document.getElementById('expenseTotal').textContent = formatAmount(expense);
+      document.getElementById('balance').textContent = formatAmount(income - expense);
+      document.getElementById('transactionCount').textContent = transactions.length;
+      // This month balance
+      const now = new Date();
+      const month = now.getMonth(), year = now.getFullYear();
+      let mIncome = 0, mExpense = 0;
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        if (d.getMonth() === month && d.getFullYear() === year) {
+          if (t.type === 'income') mIncome += t.amount;
+          else mExpense += t.amount;
+        }
+      });
+      document.getElementById('monthBalance').textContent = formatAmount(mIncome - mExpense);
+    }
+    function renderTransactions() {
+      const list = document.getElementById('transactions');
+      list.innerHTML = '';
+      let filtered = filterTransactions();
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center;color:var(--gray);padding:24px 0;">No transactions found.</div>`;
+        return;
+      }
+      filtered.forEach((t, i) => {
+        const div = document.createElement('div');
+        div.className = `transaction-item ${t.type}`;
+        div.innerHTML = `
+          <div>
+            <span style="font-weight:600;">${t.description}</span>
+            <span class="category">${t.category || 'Other'}</span>
+          </div>
+          <div class="amount">${formatAmount(t.amount)}</div>
+          <div class="date">${t.date}</div>
+          <button class="delete-btn" title="Delete" onclick="deleteTransaction(${t.id})">&times;</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function renderChart() {
+      // Pie chart for expense by category (this month)
+      const now = new Date();
+      const month = now.getMonth(), year = now.getFullYear();
+      const data = {};
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        if (t.type === 'expense' && d.getMonth() === month && d.getFullYear() === year) {
+          data[t.category || 'Other'] = (data[t.category || 'Other'] || 0) + t.amount;
+        }
+      });
+      const ctx = document.getElementById('expenseChart').getContext('2d');
+      if (window.expenseChart) window.expenseChart.destroy();
+      window.expenseChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{
+            data: Object.values(data),
+            backgroundColor: [
+              '#ff9800', '#e53935', '#3f51b5', '#43a047', '#fbc02d', '#8e24aa', '#00838f', '#757575'
+            ]
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { position: 'bottom' }
+          }
+        }
+      });
+    }
+    // --- Transaction Operations ---
+    function addTransaction(e) {
+      e.preventDefault();
+      const desc = document.getElementById('description').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('type').value;
+      const category = document.getElementById('category').value || 'Other';
+      const date = document.getElementById('date').value || todayDate();
+      if (!desc || !amount || amount <= 0 || !type || !date) return;
+      transactions.push({
+        id: Date.now() + Math.floor(Math.random()*10000),
+        description: desc,
+        amount,
+        type,
+        category,
+        date
+      });
+      saveTransactions();
+      updateSummary();
+      renderTransactions();
+      renderChart();
+      document.getElementById('transactionForm').reset();
+      document.getElementById('date').value = todayDate();
+    }
+    function deleteTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      saveTransactions();
+      updateSummary();
+      renderTransactions();
+      renderChart();
+    }
+    // --- Filtering ---
+    function filterTransactions() {
+      let filtered = [...transactions];
+      const type = document.getElementById('filterType').value;
+      const category = document.getElementById('filterCategory').value;
+      const month = document.getElementById('filterMonth').value;
+      if (type) filtered = filtered.filter(t => t.type === type);
+      if (category) filtered = filtered.filter(t => t.category === category);
+      if (month) {
+        const [y, m] = month.split('-');
+        filtered = filtered.filter(t => {
+          const d = new Date(t.date);
+          return d.getFullYear() == y && (d.getMonth()+1) == parseInt(m);
+        });
+      }
+      // Sort by date descending
+      filtered.sort((a,b) => b.date.localeCompare(a.date));
+      return filtered;
+    }
+    function clearFilters() {
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterCategory').value = '';
+      document.getElementById('filterMonth').value = '';
+      renderTransactions();
+    }
+    // --- Home Page Quick Stats ---
+    function renderHomeQuickStats() {
+      loadTransactions();
+      let income = 0, expense = 0;
+      transactions.forEach(t => {
+        if (t.type === 'income') income += t.amount;
+        else expense += t.amount;
+      });
+      let html = `
+        <div class="homeStat balance">
+          <h3>Balance</h3>
+          <div class="amount">${formatAmount(income - expense)}</div>
+        </div>
+        <div class="homeStat income">
+          <h3>Total Income</h3>
+          <div class="amount">${formatAmount(income)}</div>
+        </div>
+        <div class="homeStat expense">
+          <h3>Total Expense</h3>
+          <div class="amount">${formatAmount(expense)}</div>
+        </div>
+      `;
+      document.getElementById('homeQuickStats').innerHTML = html;
+    }
+    // --- Account History Page ---
+    function renderHistory() {
+      loadTransactions();
+      renderHistoryTransactions();
+    }
+    function renderHistoryTransactions() {
+      let filtered = filterHistoryTransactions();
+      const list = document.getElementById('historyTransactions');
+      list.innerHTML = '';
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center;color:var(--gray);padding:24px 0;">No transactions found.</div>`;
+        return;
+      }
+      filtered.forEach((t, i) => {
+        const div = document.createElement('div');
+        div.className = `transaction-item ${t.type}`;
+        div.innerHTML = `
+          <div>
+            <span style="font-weight:600;">${t.description}</span>
+            <span class="category">${t.category || 'Other'}</span>
+          </div>
+          <div class="amount">${formatAmount(t.amount)}</div>
+          <div class="date">${t.date}</div>
+          <button class="delete-btn" title="Delete" onclick="deleteHistoryTransaction(${t.id})">&times;</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+    function filterHistoryTransactions() {
+      let filtered = [...transactions];
+      const type = document.getElementById('historyFilterType').value;
+      const category = document.getElementById('historyFilterCategory').value;
+      const month = document.getElementById('historyFilterMonth').value;
+      if (type) filtered = filtered.filter(t => t.type === type);
+      if (category) filtered = filtered.filter(t => t.category === category);
+      if (month) {
+        const [y, m] = month.split('-');
+        filtered = filtered.filter(t => {
+          const d = new Date(t.date);
+          return d.getFullYear() == y && (d.getMonth()+1) == parseInt(m);
+        });
+      }
+      filtered.sort((a,b) => b.date.localeCompare(a.date));
+      return filtered;
+    }
+    function clearHistoryFilters() {
+      document.getElementById('historyFilterType').value = '';
+      document.getElementById('historyFilterCategory').value = '';
+      document.getElementById('historyFilterMonth').value = '';
+      renderHistoryTransactions();
+    }
+    function deleteHistoryTransaction(id) {
+      transactions = transactions.filter(t => t.id !== id);
+      saveTransactions();
+      renderHistoryTransactions();
+      renderDashboard();
+    }
+    // --- Profile Page ---
+    function renderProfile() {
+      let user = getCurrentUser();
+      if (!user) return;
+      document.getElementById('profileUsername').value = user.username;
+      document.getElementById('profileMsg').textContent = '';
+    }
+    document.getElementById('profileForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      let newUsername = document.getElementById('profileUsername').value.trim();
+      if (!newUsername) {
+        document.getElementById('profileMsg').innerHTML = '<span class="error">Username required.</span>';
+        return;
+      }
+      let users = getUsers();
+      let currentUser = getCurrentUser();
+      if (!currentUser) return;
+      if (users.some(u => u.username === newUsername && u.username !== currentUser.username)) {
+        document.getElementById('profileMsg').innerHTML = '<span class="error">Username already exists.</span>';
+        return;
+      }
+      // Change username in users and move transactions
+      let oldUsername = currentUser.username;
+      users = users.map(u => u.username === oldUsername ? {...u, username: newUsername} : u);
+      saveUsers(users);
+      // Move transactions
+      let oldKey = getUserStorageKey(oldUsername);
+      let newKey = getUserStorageKey(newUsername);
+      localStorage.setItem(newKey, localStorage.getItem(oldKey));
+      localStorage.removeItem(oldKey);
+      setSession(newUsername);
+      document.getElementById('profileMsg').innerHTML = '<span class="success">Username updated!</span>';
+      document.getElementById('navbarUsername').textContent = newUsername;
+    });
+    // --- Auth Forms ---
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      let username = document.getElementById('loginUsername').value.trim();
+      let password = document.getElementById('loginPassword').value;
+      let users = getUsers();
+      let user = users.find(u => u.username === username && u.password === password);
+      if (!user) {
+        document.getElementById('loginError').textContent = 'Invalid username or password.';
+        return;
+      }
+      setSession(username);
+      showPage('homePage');
+    });
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      let username = document.getElementById('registerUsername').value.trim();
+      let password = document.getElementById('registerPassword').value;
+      if (!username || !password) {
+        document.getElementById('registerError').textContent = 'All fields required.';
+        return;
+      }
+      let users = getUsers();
+      if (users.some(u => u.username === username)) {
+        document.getElementById('registerError').textContent = 'Username already exists.';
+        return;
+      }
+      users.push({username, password});
+      saveUsers(users);
+      setSession(username);
+      showPage('homePage');
+    });
+    function logout() {
+      clearSession();
+      showPage('loginPage');
+    }
+    // --- Transaction Form ---
+    document.getElementById('transactionForm').addEventListener('submit', addTransaction);
+    document.getElementById('filterType').addEventListener('change', renderTransactions);
+    document.getElementById('filterCategory').addEventListener('change', renderTransactions);
+    document.getElementById('filterMonth').addEventListener('change', renderTransactions);
+    // History filters
+    document.getElementById('historyFilterType').addEventListener('change', renderHistoryTransactions);
+    document.getElementById('historyFilterCategory').addEventListener('change', renderHistoryTransactions);
+    document.getElementById('historyFilterMonth').addEventListener('change', renderHistoryTransactions);
+    // --- Startup ---
+    function startup() {
+      if (getSession() && getCurrentUser()) {
+        showPage('homePage');
+      } else {
+        showPage('loginPage');
+      }
+    }
+    window.deleteTransaction = deleteTransaction;
+    window.clearFilters = clearFilters;
+    window.deleteHistoryTransaction = deleteHistoryTransaction;
+    window.clearHistoryFilters = clearHistoryFilters;
+    window.logout = logout;
+    window.showPage = showPage;
+    startup();
+  </script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+
+    :root {
+      --primary: #3f51b5;
+      --accent: #ff9800;
+      --danger: #e53935;
+      --success: #43a047;
+      --background: #f4f6fb;
+      --surface: #fff;
+      --text: #222;
+      --gray: #888;
+      --radius: 14px;
+    }
+    body {
+      background: var(--background);
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      color: var(--text);
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto 40px auto;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 32px rgba(63,81,181,0.06);
+      padding: 32px 24px 32px 24px;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 28px;
+      border-radius: var(--radius);
+      margin-bottom: 32px;
+      box-shadow: 0 2px 12px rgba(63,81,181,0.08);
+    }
+    .navbar .brand {
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+    }
+    .navbar nav {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .navbar a, .navbar button {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.2s;
+    }
+    .navbar a:hover, .navbar button:hover {
+      color: var(--accent);
+    }
+    .navbar .user {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-left: 16px;
+      opacity: .8;
+    }
+    @media (max-width: 700px) {
+      .navbar { flex-direction: column; gap: 8px; padding: 12px 8px; }
+      .navbar nav { gap: 12px; }
+    }
+
+    /* Home Page */
+    #homePage {
+      text-align: center;
+      padding: 32px 0;
+    }
+    #homePage h1 {
+      color: var(--primary);
+      font-size: 2.3rem;
+      margin-bottom: 16px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    #homePage p {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 32px;
+    }
+    #homeQuickStats {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .homeStat {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      box-shadow: 0 1px 6px rgba(63,81,181,0.07);
+      text-align: center;
+      min-width: 130px;
+    }
+    .homeStat h3 { margin: 0 0 6px 0; color: var(--gray); font-size: 1rem;}
+    .homeStat .amount { font-size: 1.2rem; font-weight: 700;}
+    .homeStat.income .amount { color: var(--success);}
+    .homeStat.expense .amount { color: var(--danger);}
+    .homeStat.balance .amount { color: var(--primary);}
+    #homePage .cta {
+      margin-top: 24px;
+    }
+    #homePage .cta button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    #homePage .cta button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Login/Register */
+    #loginPage, #registerPage {
+      max-width: 350px;
+      margin: 40px auto;
+      padding: 32px 24px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 2px 16px rgba(63,81,181,0.09);
+      text-align: center;
+    }
+    #loginPage h2, #registerPage h2 {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .auth-form input {
+      width: 90%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-bottom: 14px;
+      background: #f8fafc;
+      transition: border-color 0.2s;
+    }
+    .auth-form input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .auth-form button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-bottom: 8px;
+    }
+    .auth-form button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    .auth-form .switch-link {
+      color: var(--primary);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.97rem;
+      margin-top: 10px;
+      display: block;
+    }
+    .auth-form .error {
+      color: var(--danger);
+      font-size: 0.98rem;
+      margin-bottom: 10px;
+    }
+
+    /* Dashboard & Account History (reuse your previous styles) */
+    .balance-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, var(--primary) 60%, var(--accent) 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 12px rgba(63,81,181,0.08);
+    }
+    .balance-section .balance {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .summary-cards {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      flex: 1 1 160px;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 20px 18px;
+      box-shadow: 0 1px 6px rgba(63,81,181,0.07);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .summary-card h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: var(--gray); font-weight: 500;}
+    .summary-card .amount { font-size: 1.3rem; font-weight: 700;}
+    .summary-card.income .amount { color: var(--success);}
+    .summary-card.expense .amount { color: var(--danger);}
+    .summary-card.transactions .amount { color: var(--primary);}
+    .form-section {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 32px;
+      box-shadow: 0 1px 6px rgba(63,81,181,0.04);
+    }
+    .form-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .form-row input, .form-row select {
+      flex: 1 1 120px;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+    .form-row input:focus, .form-row select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .form-row button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .form-row button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    .filter-section {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .filter-section select, .filter-section input[type="month"] {
+      padding: 6px 10px;
+      border-radius: 7px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+    }
+    .transactions-section {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 1px 6px rgba(63,81,181,0.04);
+      margin-bottom: 30px;
+    }
+    .transactions-list {
+      max-height: 270px;
+      overflow-y: auto;
+      border-radius: 7px;
+    }
+    .transaction-item {
+      display: grid;
+      grid-template-columns: 1fr 110px 100px 40px;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 0;
+      border-bottom: 1px solid #ececec;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+    .transaction-item.income .amount { color: var(--success);}
+    .transaction-item.expense .amount { color: var(--danger);}
+    .transaction-item .category {
+      background: #e3e8ff;
+      color: var(--primary);
+      font-size: 0.93rem;
+      padding: 2px 10px;
+      border-radius: 7px;
+      display: inline-block;
+    }
+    .transaction-item.expense .category {
+      background: #ffe7e7;
+      color: var(--danger);
+    }
+    .transaction-item .date {
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+    .delete-btn {
+      color: var(--danger);
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .delete-btn:hover { color: #b71c1c; }
+    .chart-section {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-top: 16px;
+      box-shadow: 0 1px 6px rgba(63,81,181,0.04);
+    }
+    @media (max-width: 700px) {
+      .summary-cards { flex-direction: column; }
+      .balance-section { flex-direction: column; gap: 12px; }
+      .transaction-item { grid-template-columns: 1fr 70px 70px 30px;}
+      #homeQuickStats { flex-direction: column; }
+    }
+
+    /* Profile Page */
+    #profilePage {
+      max-width: 400px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 12px rgba(63,81,181,0.07);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    #profilePage h2 {
+      color: var(--primary);
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+    #profilePage label {
+      display: block;
+      margin: 14px 0 7px 0;
+      color: var(--gray);
+      font-size: 1rem;
+      text-align: left;
+    }
+    #profilePage input {
+      width: 90%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #f8fafc;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    #profilePage input:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    #profilePage button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      margin-top: 12px;
+    }
+    #profilePage button:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+    #profilePage .logout-btn {
+      background: var(--danger);
+      margin-top: 24px;
+    }
+    #profilePage .logout-btn:hover {
+      background: #b71c1c;
+    }
+    #profilePage .success {
+      color: var(--success);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    #profilePage .error {
+      color: var(--danger);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+  
